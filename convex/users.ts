@@ -24,14 +24,13 @@ export const syncUser = mutation({
 });
 
 export const getUsers = query({
- args: { clerkId: v.string() },
-  handler: async (ctx, args) => {
-    if (!args.clerkId) return null;
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("User is not authenticated");
 
-    return await ctx.db
-      .query("users")
-      .withIndex("by_clerk_id", (q) => q.eq("clerkId", args.clerkId))
-      .unique();
+    const users = await ctx.db.query("users").collect();
+
+    return users;
   },
 });
 

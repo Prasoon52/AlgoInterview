@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import "@stream-io/video-react-sdk/dist/css/styles.css";
 import "./globals.css";
-import { ClerkProvider } from "@clerk/nextjs";
-import { ConvexProviderWithClerk } from "convex/react-clerk";
+import { RedirectToSignIn, SignedIn, SignedOut } from "@clerk/nextjs";
 import ConvexClerkProvider from "@/components/providers/ConvexClerkProvider";
-import Navbar from "@/components/navbar";
+import Navbar from "@/components/Navbar";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
-import { SignedIn, UserButton,SignedOut, RedirectToSignIn} from "@clerk/nextjs";
+import { Toaster } from "react-hot-toast";
+
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",
@@ -30,31 +31,28 @@ export default function RootLayout({
 }>) {
   return (
     <ConvexClerkProvider>
-    <html lang="en" suppressHydrationWarning>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <ThemeProvider
+      <html lang="en" suppressHydrationWarning>
+        <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+          <ThemeProvider
             attribute="class"
             defaultTheme="system"
             enableSystem
             disableTransitionOnChange
           >
-            <SignedIn>  
-        <div className="min-h-screen">
-          <Navbar/>
-          <main className="px-4 sm:px-6 lg:px-8">
-            {children}
-          </main>
-        </div>
-        </SignedIn>
-        
-        <SignedOut>
-          <RedirectToSignIn/>
-          </SignedOut>
-        </ThemeProvider>
-      </body>
-    </html>
+            <SignedIn>
+              <div className="min-h-screen">
+                <Navbar />
+                <main className="px-4 sm:px-6 lg:px-8">{children}</main>
+              </div>
+            </SignedIn>
+
+            <SignedOut>
+              <RedirectToSignIn />
+            </SignedOut>
+          </ThemeProvider>
+          <Toaster />
+        </body>
+      </html>
     </ConvexClerkProvider>
   );
 }
