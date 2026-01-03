@@ -1,19 +1,25 @@
 "use server";
 
-import { auth } from "@clerk/nextjs/server"; // Change this
 import { StreamClient } from "@stream-io/node-sdk";
+import { currentUser } from "@clerk/nextjs/server";
 
-export const streamTokenProvider = async () => {
-  const { userId } = await auth(); // Use auth() instead
+const apiKey = process.env.NEXT_PUBLIC_STREAM_API_KEY;
+const apiSecret = process.env.STREAM_SECRET_KEY;
 
-  if (!userId) throw new Error("User not authenticated");
+export const getToken = async () => {
+  const user = await currentUser();
 
-  const streamClient = new StreamClient(
-    process.env.NEXT_PUBLIC_STREAM_API_KEY!,
-    process.env.STREAM_SECRET_KEY!
-  );
+  if (!user) throw new Error("User is not logged in");
+  if (!apiKey) throw new Error("No API key");
+  if (!apiSecret) throw new Error("No API secret");
 
-  const token = streamClient.generateUserToken({ user_id: userId });
+  const client = new StreamClient(apiKey, apiSecret);
 
+  // Expire in 1 hour
+  const exp = Math.round(new Date().getTime() / 1000) + 60 * 60;
+  const issued = Math.round(Date.now() / 1000) - 60;
+
+  const token = client.createToken(user.id, exp, issued);
   return token;
 };
+export default getToken;
