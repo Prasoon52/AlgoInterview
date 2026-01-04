@@ -4,7 +4,7 @@ import "@stream-io/video-react-sdk/dist/css/styles.css";
 import "./globals.css";
 import { RedirectToSignIn, SignedIn, SignedOut } from "@clerk/nextjs";
 import ConvexClerkProvider from "@/components/providers/ConvexClerkProvider";
-import Navbar from "@/components/Navbar";
+import Navbar from "@/components/navbar";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { Toaster } from "react-hot-toast";
 
